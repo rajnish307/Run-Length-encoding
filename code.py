@@ -1,4 +1,4 @@
-#PF-Assgn-30
+#RLE
 i=0
 def encode(message):
     count=1
