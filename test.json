@@ -75,10 +75,26 @@ def lambda_handler(event, context):
         "JobName": "MyGlueJob"
       },
       "ResultPath": "$.glueJobOutput",
-      "Next": "Choice"
+      "Next": "WaitForCompletion"
     },
-    "Choice": {
+    "WaitForCompletion": {
+      "Type": "Wait",
+      "Seconds": 3600  // Adjust wait time as needed
+    },
+    "CheckGlueJobStatus": {
       "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.glueJobOutput.JobRunState",
+          "NumericEquals": 20,  // SUCCEEDED state
+          "Next": "LambdaFunction"
+        },
+        {
+          "Variable": "$.glueJobOutput.JobRunState",
+          "NumericEquals": 7,   // FAILED state
+          "Next": "LambdaFunction"
+        }
+      ],
       "Default": "LambdaFunction"
     },
     "LambdaFunction": {
@@ -89,3 +105,4 @@ def lambda_handler(event, context):
     }
   }
 }
+
