@@ -33,3 +33,19 @@
     }
   }
 }
+
+
+
+import json
+
+def lambda_handler(event, context):
+    glue_job_execution_id = event
+
+    # Do something with the execution ID
+    print(f"Glue job execution ID: {glue_job_execution_id}")
+
+    return {
+        'statusCode': 200,
+        'body': json.dumps('Lambda function executed successfully')
+    }
+
