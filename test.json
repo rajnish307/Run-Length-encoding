@@ -63,8 +63,6 @@ def lambda_handler(event, context):
 
 
 
-
-
 {
   "StartAt": "GlueJob",
   "States": {
@@ -75,32 +73,23 @@ def lambda_handler(event, context):
         "JobName": "MyGlueJob"
       },
       "ResultPath": "$.glueJobOutput",
-      "Next": "WaitForCompletion"
-    },
-    "WaitForCompletion": {
-      "Type": "Wait",
-      "Seconds": 3600  // Adjust wait time as needed
-    },
-    "CheckGlueJobStatus": {
-      "Type": "Choice",
-      "Choices": [
+      "Next": "LambdaFunction",
+      "Catch": [
         {
-          "Variable": "$.glueJobOutput.JobRunState",
-          "NumericEquals": 20,  // SUCCEEDED state
-          "Next": "LambdaFunction"
-        },
-        {
-          "Variable": "$.glueJobOutput.JobRunState",
-          "NumericEquals": 7,   // FAILED state
-          "Next": "LambdaFunction"
+          "ErrorEquals": ["States.ALL"],
+          "Next": "ErrorHandlingLambda"
         }
-      ],
-      "Default": "LambdaFunction"
+      ]
     },
     "LambdaFunction": {
       "Type": "Task",
       "Resource": "arn:aws:lambda:us-east-1:123456789012:function:MyLambdaFunction",
       "InputPath": "$.glueJobOutput.JobRunId",
+      "End": true
+    },
+    "ErrorHandlingLambda": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-east-1:123456789012:function:ErrorHandlingLambda",
       "End": true
     }
   }
