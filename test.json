@@ -1,0 +1,35 @@
+{
+  "StartAt": "GlueJob",
+  "States": {
+    "GlueJob": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::glue:startJobRun.sync",
+      "Parameters": {
+        "JobName": "MyGlueJob"
+      },
+      "ResultPath": "$.glueJobOutput",
+      "Next": "WaitForCompletion"
+    },
+    "WaitForCompletion": {
+      "Type": "Wait",
+      "SecondsPath": "$.glueJobOutput.JobRunId", // Placeholder for dynamic wait time
+      "Next": "GetJobRun"
+    },
+    "GetJobRun": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::glue:getJobRun",
+      "Parameters": {
+        "JobName": "MyGlueJob",
+        "RunId": "$.glueJobOutput.JobRunId"
+      },
+      "ResultPath": "$.glueJobOutput",
+      "Next": "LambdaFunction"
+    },
+    "LambdaFunction": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-east-1:123456789012:function:MyLambdaFunction",
+      "InputPath": "$.glueJobOutput.JobRunId",
+      "End": true
+    }
+  }
+}
