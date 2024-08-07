@@ -4,34 +4,12 @@
   "States": {
     "StartDMSTask": {
       "Type": "Task",
-      "Resource": "arn:aws:states:::aws-sdk:dms:startReplicationTask",
+      "Resource": "arn:aws:states:::aws-sdk:dms:startReplicationTask.sync",
       "Parameters": {
         "ReplicationTaskArn": "your-dms-task-arn",
         "StartReplicationTaskType": "start-replication"
       },
-      "Next": "WaitForCompletion"
-    },
-    "WaitForCompletion": {
-      "Type": "Wait",
-      "Seconds": 30,
-      "Next": "CheckDMSTaskStatus"
-    },
-    "CheckDMSTaskStatus": {
-      "Type": "Task",
-      "Resource": "arn:aws:lambda:region:account-id:function:check-dms-task-status-function",
-      "ResultPath": "$.statusResult",
-      "Next": "IsDMSTaskCompleted"
-    },
-    "IsDMSTaskCompleted": {
-      "Type": "Choice",
-      "Choices": [
-        {
-          "Variable": "$.statusResult.task_status",
-          "StringEquals": "stopped",
-          "Next": "ProcessDMSTaskOutput"
-        }
-      ],
-      "Default": "WaitForCompletion"
+      "Next": "ProcessDMSTaskOutput"
     },
     "ProcessDMSTaskOutput": {
       "Type": "Task",
