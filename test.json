@@ -27,7 +27,7 @@
       "Choices": [
         {
           "Variable": "$.statusResult.task_status",
-          "StringEquals": "ready",
+          "StringEquals": "stopped",
           "Next": "ProcessDMSTaskOutput"
         }
       ],
