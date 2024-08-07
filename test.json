@@ -36,7 +36,7 @@
     "ProcessDMSTaskOutput": {
       "Type": "Task",
       "Resource": "arn:aws:lambda:region:account-id:function:process-dms-task-output-function",
-      "End": True
+      "End": true
     }
   }
 }
